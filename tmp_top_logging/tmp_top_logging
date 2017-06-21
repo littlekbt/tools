@@ -1,0 +1,76 @@
+#! /bin/sh
+
+top_logging() {
+  LOG_DIR=$1
+  DURATION=$2
+ 
+  while :
+  do
+    DATEHOUR=`date +%Y%m%d_%H`
+    FILE=$LOG_DIR'/top_'$DATEHOUR'.log'
+    date +%Y%m%d_%H:%M:%S >> $FILE
+    top -b -n 1 >> $FILE
+    echo "" >> $FILE
+  
+    sleep $DURATION
+  done
+}
+
+OS_NAME=`head -n 1 /etc/os-release`
+OS=
+DURATION=10
+STORE_VERSION_NUM=3
+LOG_DIR='/tmp/top'
+
+while getopts d:s:f: OPT
+do
+  case $OPT in
+    "d") DURATION=$OPTARG
+          ;;
+    "s") STORE_VERION_NUM=$OPTARG
+          ;;
+    "f") LOG_DIR=$OPTARG
+          ;;
+    "?") echo "unknown options."
+          ;;
+  esac
+done
+
+# check os
+if echo $OS_NAME | grep -i 'ubuntu' >/dev/null; then
+  OS=ubuntu
+fi
+echo $OS_NAME | grep -i centos
+if echo $OS_NAME | grep -i 'centos' >/dev/null; then
+  OS=centos
+fi
+
+if [ ! -n "$OS" ]; then
+  echo "error: tmp_top_logging can use only ubuntu or centos."
+  exit 1
+fi
+
+if [ ! -e $LOG_DIR ]; then
+  mkdir $LOG_DIR
+fi
+
+# check and exec tmp*** command.
+if [ "$OS" = 'ubuntu' ]; then
+  type tmpreaper
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+
+  tmpreaper $STORE_VERSION_NUM $LOG_DIR
+
+elif [ "$OS" = 'centos' ];then
+  type tmpwatch
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+
+  tmpwatch $STORE_VERSION_NUM $LOG_DIR
+fi
+
+# start logging
+top_logging $LOG_DIR $DURATION
