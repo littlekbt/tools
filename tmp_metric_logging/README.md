@@ -1,12 +1,12 @@
 # tmp_metric_logging
 
-tmp_metric_logging saves output of top, vmstat, iostat, mpstat commands temporary.
+tmp_metric_logging saves top, vmstat, iostat, mpstat command's output temporary.
 
 ## Description
 tmp_metric_logging saves temporary output of commands.  
 It effective when you want to know the details of server metric.
 
-It supports `top -b -n 1`, `vmstat`, `iostat -dmx`, `mpstat -P ALL`.
+It supports commands `top -b -n 1`, `vmstat`, `iostat -dmx`, `mpstat -P ALL`.
 
 Once exec commands, writes stdout to /tmp/metric/{command_name}/yyyymmdd_MM.log file.
 
