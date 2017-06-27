@@ -26,8 +26,6 @@ EOF
   exit 1
 }
 
-OS_NAME=`head -n 1 /etc/os-release`
-OS=
 DURATION=2
 STORE_VERSION_NUM=3
 LOG_DIR='/tmp/metric'
