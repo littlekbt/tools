@@ -1,0 +1,81 @@
+#! /bin/bash
+
+
+#$1: command
+#$2: dir path
+#$3: filename
+#$4: date
+logging() {
+  COMMAND=$1
+  DIR_PATH=$2
+  FULL_PATH=$DIR_PATH'/'$3
+  
+  if [ ! -e $DIR_PATH ]; then
+    mkdir $DIR_PATH
+  fi
+
+  echo '['$4']' >> $FULL_PATH
+  $COMMAND >> $FULL_PATH
+}
+
+usage() {
+  cat << EOF
+tmp_metric_logging [-d <duration exec top command>] [-n <store num of versions>] [-f <path to log dir>] [-t]
+EOF
+
+  exit 1
+}
+
+OS_NAME=`head -n 1 /etc/os-release`
+OS=
+DURATION=2
+STORE_VERSION_NUM=3
+LOG_DIR='/tmp/metric'
+DRY_RUN=false
+
+while getopts d:s:f:t OPT
+do
+  case $OPT in
+    "d") DURATION=$OPTARG
+          ;;
+    "n") STORE_VERION_NUM=$OPTARG
+          ;;
+    "f") LOG_DIR=$OPTARG
+          ;;
+    "t") DRY_RUN=true
+          ;;
+    "?") usage $OPT
+          ;;
+  esac
+done
+
+# create watch directory
+if [ ! -e $LOG_DIR ]; then
+  mkdir $LOG_DIR
+fi
+
+# start manage versions and logging
+while :
+do
+  DATE=`date`
+  DATEHOUR=`date +%Y%m%d_%H`.log
+  for c in 'top -b -n 1' 'vmstat' 'iostat -dmx' 'mpstat -P ALL'
+  do
+    DIR_NAME=`echo $c | awk '{print $1}'`
+    DIR_PATH=$LOG_DIR/$DIR_NAME
+ 
+    # logging
+    logging "$c" "$DIR_PATH" $DATEHOUR "$DATE"
+
+    # check and remove old versions
+    if [ `ls -1 $DIR_PATH | wc -l` -gt $STORE_VERSION_NUM ];then
+      if $DRY_RUN ;then
+        echo will remove version: `ls -1d $DIR_PATH/* | sort -V | head -n -$STORE_VERSION_NUM`
+        :
+      else
+        rm `ls -1d $DIR_PATH/* | sort -V | head -n -$STORE_VERSION_NUM`
+      fi
+    fi
+  done
+  sleep $DURATION
+done
