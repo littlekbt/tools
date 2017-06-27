@@ -10,7 +10,7 @@ It supports commands `top -b -n 1`, `vmstat`, `iostat -dmx`, `mpstat -P ALL`.
 
 Once exec commands, writes stdout to /tmp/metric/{command_name}/yyyymmdd_MM.log file.
 
-※ note: /tmp/metric is default. You can change directory by using -d option.
+※ note: /tmp/metric is default. You can change directory by using -f option.
 
 ## Usage
 
