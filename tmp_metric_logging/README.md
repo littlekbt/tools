@@ -15,7 +15,7 @@ Once exec commands, writes stdout to /tmp/metric/{command_name}/yyyymmdd_MM.log 
 ## Usage
 
 ```
-$ sh tmp_metric_logging [-d <duration exec commands>] [-s <num of versions to store>] [-f <path to log dir>] [-t]
+$ sh tmp_metric_logging [-d <duration exec commands>] [-n <num of versions to store>] [-f <path to log dir>] [-t]
 ```
 
 ※ -t: t is dry-run option. if use -t, don't remove old version files.

@@ -33,12 +33,12 @@ STORE_VERSION_NUM=3
 LOG_DIR='/tmp/metric'
 DRY_RUN=false
 
-while getopts d:s:f:t OPT
+while getopts d:n:f:t OPT
 do
   case $OPT in
     "d") DURATION=$OPTARG
           ;;
-    "n") STORE_VERION_NUM=$OPTARG
+    "n") STORE_VERSION_NUM=$OPTARG
           ;;
     "f") LOG_DIR=$OPTARG
           ;;
@@ -68,6 +68,7 @@ do
     logging "$c" "$DIR_PATH" $DATEHOUR "$DATE"
 
     # check and remove old versions
+    echo $STORE_VERSION_NUM
     if [ `ls -1 $DIR_PATH | wc -l` -gt $STORE_VERSION_NUM ];then
       if $DRY_RUN ;then
         echo will remove version: `ls -1d $DIR_PATH/* | sort -V | head -n -$STORE_VERSION_NUM`
