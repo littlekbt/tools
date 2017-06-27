@@ -18,6 +18,24 @@ logging() {
   $COMMAND >> $FULL_PATH
 }
 
+#$1: dir path
+#$2: store version num
+#$3: dry run
+check_and_remove() {
+  DIR_PATH=$1
+  STORE_VERSION_NUM=$2
+  DRY_RUN=$3
+
+  if [ `ls -1 $DIR_PATH | wc -l` -gt $STORE_VERSION_NUM ];then
+    if $DRY_RUN ;then
+      echo will remove version: `ls -1d $DIR_PATH/* | sort -V | head -n -$STORE_VERSION_NUM`
+      :
+    else
+      rm `ls -1d $DIR_PATH/* | sort -V | head -n -$STORE_VERSION_NUM`
+    fi
+  fi
+}
+
 usage() {
   cat << EOF
 tmp_metric_logging [-d <duration exec top command>] [-n <store num of versions>] [-f <path to log dir>] [-t]
@@ -66,14 +84,8 @@ do
     logging "$c" "$DIR_PATH" $DATEHOUR "$DATE"
 
     # check and remove old versions
-    if [ `ls -1 $DIR_PATH | wc -l` -gt $STORE_VERSION_NUM ];then
-      if $DRY_RUN ;then
-        echo will remove version: `ls -1d $DIR_PATH/* | sort -V | head -n -$STORE_VERSION_NUM`
-        :
-      else
-        rm `ls -1d $DIR_PATH/* | sort -V | head -n -$STORE_VERSION_NUM`
-      fi
-    fi
+    check_and_remove "$DIR_PATH" $STORE_VERSION_NUM $DRY_RUN
+
   done
   sleep $DURATION
 done
