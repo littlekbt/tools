@@ -12,6 +12,10 @@ Once exec commands, writes stdout to /tmp/metric/{command_name}/yyyymmdd_MM.log 
 
 ※ note: /tmp/metric is default. You can change directory by using -f option.
 
+## Require
+
+sysstat, procps package.
+
 ## Usage
 
 ```
