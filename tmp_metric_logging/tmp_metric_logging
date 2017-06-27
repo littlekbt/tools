@@ -68,7 +68,6 @@ do
     logging "$c" "$DIR_PATH" $DATEHOUR "$DATE"
 
     # check and remove old versions
-    echo $STORE_VERSION_NUM
     if [ `ls -1 $DIR_PATH | wc -l` -gt $STORE_VERSION_NUM ];then
       if $DRY_RUN ;then
         echo will remove version: `ls -1d $DIR_PATH/* | sort -V | head -n -$STORE_VERSION_NUM`
